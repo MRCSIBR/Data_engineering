@@ -95,4 +95,4 @@ Cheatsheet for Python in data engineering along with some commonly used SQL quer
   SELECT column FROM table_name WHERE column IN (SELECT column FROM other_table);
   ```
 
-Remember, these snippets are just a starting point. Data engineering involves a wide range of tasks, so always refer to documentation or resources for more specific use cases and functions.
+These snippets are just a starting point. Data engineering involves a wide range of tasks, so always refer to documentation or resources for more specific use cases and functions.
