@@ -96,3 +96,12 @@ Cheatsheet for Python in data engineering along with some commonly used SQL quer
   ```
 
 These snippets are just a starting point. Data engineering involves a wide range of tasks, so always refer to documentation or resources for more specific use cases and functions.
+
+## Encodings
+
+ Database encodings play a significant role in storing, managing, and retrieving data efficiently. Here are some popular database encodings:
+
+    UTF-8: Widely used encoding supporting multiple languages.
+    UTF-16: A variable-width character encoding capable of encoding all Unicode characters.
+    ISO-8859-1: Supports Western European languages.
+    ASCII: Basic encoding standard for characters in computers.
