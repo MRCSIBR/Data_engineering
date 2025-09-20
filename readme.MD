@@ -1,107 +1,268 @@
 
-### Python for Data Engineering:
-Cheatsheet for Python in data engineering along with some commonly used SQL queries:
 
-#### Libraries:
-- **Pandas**: For data manipulation and analysis.
-- **NumPy**: For numerical computing.
-- **SQLAlchemy**: For SQL toolkit and Object-Relational Mapping (ORM).
+# Cheatsheet de Ingeniería de Datos con Python
 
-#### Data Handling:
-- **Reading Data**:
-  ```python
-  import pandas as pd
-  data = pd.read_csv('file.csv')  # Reading CSV
-  data = pd.read_json('file.json')  # Reading JSON
-  ```
+Guía rápida de Python para ingeniería de datos con consultas SQL esenciales:
 
-- **Data Exploration**:
-  ```python
-  data.head()  # View first few rows
-  data.describe()  # Summary statistics
-  data.info()  # Information about columns and data types
-  ```
+## Bibliotecas Esenciales
 
-- **Data Cleaning**:
-  ```python
-  data.isnull().sum()  # Check for missing values
-  data.fillna(value)  # Fill missing values
-  data.dropna()  # Drop rows with missing values
-  ```
+- **Pandas**: Manipulación y análisis de datos
+- **NumPy**: Computación numérica
+- **SQLAlchemy**: Toolkit SQL y ORM (Mapeo Objeto-Relacional)
+- **PySpark**: Procesamiento distribuido de datos a gran escala
+- **Dask**: Computación paralela
+- **Apache Airflow**: Orquestación de flujos de trabajo
+- **requests**: Interacción con APIs
+- **psycopg2**: Conector para PostgreSQL
+- **pymongo**: Conector para MongoDB
 
-- **Data Transformation**:
-  ```python
-  data['new_column'] = data['column1'] + data['column2']  # Create new column
-  data['column'].apply(function)  # Apply function to a column
-  ```
+## Manejo de Datos con Pandas
 
-- **Data Manipulation**:
-  ```python
-  data.groupby('column').agg({'other_column': 'mean'})  # Grouping and aggregation
-  data.pivot_table(values='value', index='index', columns='columns')  # Pivot tables
-  ```
+### Lectura de Datos
+```python
+import pandas as pd
 
-- **Data Visualization**:
-  ```python
-  import matplotlib.pyplot as plt
-  data.plot(kind='bar')  # Creating a bar plot
-  plt.show()
-  ```
+# Lectura de archivos
+df = pd.read_csv('archivo.csv')           # CSV
+df = pd.read_json('archivo.json')          # JSON
+df = pd.read_excel('archivo.xlsx')        # Excel
+df = pd.read_parquet('archivo.parquet')   # Parquet
+df = pd.read_sql('SELECT * FROM tabla', con)  # Desde BD
+```
 
-#### SQL Queries:
+### Exploración de Datos
+```python
+df.head(10)           # Primeras 10 filas
+df.tail(5)            # Últimas 5 filas
+df.describe()         # Estadísticas descriptivas
+df.info()             # Información de columnas y tipos
+df.shape              # Dimensiones (filas, columnas)
+df.columns            # Nombres de columnas
+df.dtypes             # Tipos de datos
+df.isnull().sum()     # Valores nulos por columna
+```
 
-##### Common SQL Queries:
+### Limpieza de Datos
+```python
+# Manejo de valores nulos
+df.fillna(0)                         # Rellenar con 0
+df.fillna(df.mean())                 # Rellenar con media
+df.dropna()                          # Eliminar filas con nulos
+df.dropna(subset=['columna'])        # Eliminar nulos en columna específica
 
-- **Select Query**:
-  ```sql
-  SELECT column1, column2 FROM table_name WHERE condition;
-  ```
+# Eliminación de duplicados
+df.drop_duplicates()                 # Eliminar filas duplicadas
+df.drop_duplicates(subset=['columna']) # Eliminar duplicados en columna
 
-- **Insert Query**:
-  ```sql
-  INSERT INTO table_name (column1, column2) VALUES (value1, value2);
-  ```
+# Conversión de tipos
+df['columna'] = df['columna'].astype('int32')  # Cambiar tipo de dato
+```
 
-- **Update Query**:
-  ```sql
-  UPDATE table_name SET column1 = value1 WHERE condition;
-  ```
+### Transformación de Datos
+```python
+# Crear nuevas columnas
+df['nueva_columna'] = df['col1'] + df['col2']
+df['nueva_columna'] = df['col'].apply(lambda x: x*2)
 
-- **Delete Query**:
-  ```sql
-  DELETE FROM table_name WHERE condition;
-  ```
+# Funciones personalizadas
+def transformar(valor):
+    return valor.upper()
 
-- **Join Queries**:
-  ```sql
-  SELECT * FROM table1 INNER JOIN table2 ON table1.key = table2.key;
-  ```
+df['columna'] = df['columna'].apply(transformar)
 
-- **Aggregate Functions**:
-  ```sql
-  SELECT COUNT(column) FROM table_name;
-  SELECT AVG(column) FROM table_name;
-  SELECT MAX(column) FROM table_name;
-  SELECT MIN(column) FROM table_name;
-  ```
+# Mapeo de valores
+mapeo = {'A': 1, 'B': 2, 'C': 3}
+df['columna_num'] = df['columna'].map(mapeo)
+```
 
-- **Group By and Having**:
-  ```sql
-  SELECT column1, COUNT(*) FROM table_name GROUP BY column1 HAVING COUNT(*) > 1;
-  ```
+### Manipulación Avanzada
+```python
+# Agrupación y agregación
+df.groupby('categoria').agg({
+    'ventas': 'sum',
+    'clientes': 'count'
+})
 
-- **Subqueries**:
-  ```sql
-  SELECT column FROM table_name WHERE column IN (SELECT column FROM other_table);
-  ```
+# Tablas dinámicas
+df.pivot_table(
+    values='ventas',
+    index='region',
+    columns='producto',
+    aggfunc='sum'
+)
 
-These snippets are just a starting point. Data engineering involves a wide range of tasks, so always refer to documentation or resources for more specific use cases and functions.
+# Combinar DataFrames
+pd.concat([df1, df2])              # Concatenar
+pd.merge(df1, df2, on='id')         # Unir (JOIN)
+df1.join(df2, on='id')              # Unir por índice
+```
 
-## Encodings
+### Visualización de Datos
+```python
+import matplotlib.pyplot as plt
 
- Database encodings play a significant role in storing, managing, and retrieving data efficiently. Here are some popular database encodings:
+df.plot(kind='line', x='fecha', y='valor')  # Gráfico de líneas
+df.plot(kind='bar', x='categoria', y='total') # Gráfico de barras
+df.hist(column='edad')                      # Histograma
+df.boxplot(column='salario')                # Diagrama de caja
 
-    UTF-8: Widely used encoding supporting multiple languages.
-    UTF-16: A variable-width character encoding capable of encoding all Unicode characters.
-    ISO-8859-1: Supports Western European languages.
-    ASCII: Basic encoding standard for characters in computers.
+plt.title('Título del Gráfico')
+plt.xlabel('Eje X')
+plt.ylabel('Eje Y')
+plt.show()
+```
+
+## Trabajo con Bases de Datos
+
+### Conexión con SQLAlchemy
+```python
+from sqlalchemy import create_engine
+
+# PostgreSQL
+engine = create_engine('postgresql://user:password@localhost:5432/dbname')
+
+# MySQL
+engine = create_engine('mysql+pymysql://user:password@localhost/dbname')
+
+# SQLite
+engine = create_engine('sqlite:///database.db')
+```
+
+### Operaciones SQL
+```python
+# Ejecutar consultas
+result = engine.execute("SELECT * FROM tabla WHERE condicion")
+data = result.fetchall()  # Obtener todos los resultados
+
+# Leer directamente a DataFrame
+df = pd.read_sql("SELECT * FROM tabla", engine)
+
+# Escribir DataFrame a BD
+df.to_sql('nombre_tabla', engine, if_exists='replace', index=False)
+
+# Transacciones
+with engine.begin() as conn:
+    conn.execute("UPDATE tabla SET columna = valor WHERE condicion")
+```
+
+## Consultas SQL Esenciales
+
+### Operaciones Básicas
+```sql
+-- Selección
+SELECT columna1, columna2 FROM tabla WHERE condicion;
+
+-- Inserción
+INSERT INTO tabla (columna1, columna2) VALUES (valor1, valor2);
+
+-- Actualización
+UPDATE tabla SET columna1 = valor1 WHERE condicion;
+
+-- Eliminación
+DELETE FROM tabla WHERE condicion;
+```
+
+### Joins
+```sql
+-- INNER JOIN
+SELECT * FROM tabla1 
+INNER JOIN tabla2 ON tabla1.id = tabla2.id;
+
+-- LEFT JOIN
+SELECT * FROM tabla1 
+LEFT JOIN tabla2 ON tabla1.id = tabla2.id;
+
+-- RIGHT JOIN
+SELECT * FROM tabla1 
+RIGHT JOIN tabla2 ON tabla1.id = tabla2.id;
+
+-- FULL OUTER JOIN
+SELECT * FROM tabla1 
+FULL OUTER JOIN tabla2 ON tabla1.id = tabla2.id;
+```
+
+### Funciones de Agregación
+```sql
+SELECT COUNT(*) FROM tabla;                    -- Contar registros
+SELECT AVG(columna) FROM tabla;                 -- Promedio
+SELECT MAX(columna) FROM tabla;                 -- Máximo
+SELECT MIN(columna) FROM tabla;                 -- Mínimo
+SELECT SUM(columna) FROM tabla;                 -- Suma
+SELECT STDDEV(columna) FROM tabla;              -- Desviación estándar
+```
+
+### Agrupación y Filtrado
+```sql
+-- GROUP BY
+SELECT categoria, COUNT(*) FROM tabla 
+GROUP BY categoria;
+
+-- HAVING (filtrar grupos)
+SELECT categoria, COUNT(*) as total FROM tabla 
+GROUP BY categoria 
+HAVING COUNT(*) > 10;
+
+-- ORDER BY
+SELECT * FROM tabla 
+ORDER BY columna DESC;  -- ASC para ascendente
+```
+
+### Subconsultas y CTEs
+```sql
+-- Subconsulta
+SELECT columna FROM tabla 
+WHERE columna IN (SELECT columna FROM otra_tabla WHERE condicion);
+
+-- CTE (Common Table Expression)
+WITH cte AS (
+    SELECT columna, COUNT(*) as total 
+    FROM tabla 
+    GROUP BY columna
+)
+SELECT * FROM cte WHERE total > 5;
+```
+
+## Codificaciones de Base de Datos
+
+Las codificaciones son cruciales para el almacenamiento eficiente de datos:
+
+- **UTF-8**: Codificación estándar que soporta múltiples idiomas (recomendada)
+- **UTF-16**: Codificación de ancho variable para todos los caracteres Unicode
+- **ISO-8859-1**: Soporte para idiomas de Europa Occidental
+- **ASCII**: Codificación básica para caracteres en inglés
+- **Latin-1**: Similar a ISO-8859-1, ampliamente utilizada
+
+## Consejos Adicionales
+
+1. **Optimización de memoria**:
+   ```python
+   # Especificar tipos de datos al leer
+   dtypes = {'columna1': 'int32', 'columna2': 'category'}
+   df = pd.read_csv('archivo.csv', dtype=dtypes)
+   ```
+
+2. **Procesamiento de grandes datasets**:
+   ```python
+   # Usar chunks para archivos grandes
+   chunk_iter = pd.read_csv('archivo_grande.csv', chunksize=10000)
+   for chunk in chunk_iter:
+       procesar(chunk)
+   ```
+
+3. **Manejo de fechas**:
+   ```python
+   df['fecha'] = pd.to_datetime(df['fecha_columna'])
+   df['año'] = df['fecha'].dt.year
+   df['mes'] = df['fecha'].dt.month
+   ```
+
+4. **Conexiones seguras**:
+   ```python
+   # Usar variables de entorno para credenciales
+   import os
+   user = os.getenv('DB_USER')
+   password = os.getenv('DB_PASSWORD')
+   engine = create_engine(f'postgresql://{user}:{password}@localhost/dbname')
+   ```
+
+Esta cheatsheet cubre las operaciones más comunes en ingeniería de datos. Siempre consulta la documentación oficial para casos específicos y mejores prácticas.
